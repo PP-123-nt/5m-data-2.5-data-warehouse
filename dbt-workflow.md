@@ -78,3 +78,75 @@ liquor_sales/
 ├── dbt_project.yml     # Main config (Routing & Materialization)
 └── profiles.yml        # Connection config (Default Schema)
 ```
+
+
+
+
+
+# dbt Configuration: Mastering `.yml` Files
+
+In dbt, `.yml` files (`schema.yml`, `sources.yml`) are the **control center for Documentation, Testing, and Data Lineage**. 
+
+While `.sql` files contain the actual data transformation logic, `.yml` files describe *what* the data is, *how* to validate it, and *how* models connect to each other.
+
+## 1. `sources.yml` (Defining Raw Data)
+This file tells dbt where your raw, unmigrated data lives (e.g., data loaded by external tools like Fivetran or Airbyte, or public datasets).
+
+*   **Purpose:** To map database schemas and tables so they can be referenced in dbt models.
+*   **Example:** Mapping the public Iowa Liquor Sales dataset in BigQuery.
+    ```yaml
+    version: 2
+    sources:
+      - name: iowa_liquor_sales
+        database: bigquery-public-data
+        tables:
+          - name: sales
+    ```
+*   **Benefit:** Allows you to use `{{ source('iowa_liquor_sales', 'sales') }}` in your SQL instead of hardcoding the full table path. It also creates the very first node in your Lineage Graph.
+
+## 2. `schema.yml` (Documentation & Data Quality)
+You can have multiple `schema.yml` files (e.g., one for staging, one for marts). dbt uses them to document and test your models.
+
+### A. Documentation
+*   Add `description:` tags to your models and columns.
+*   **Result:** When you run `dbt docs generate`, these descriptions populate a searchable data dictionary for your team.
+
+### B. Data Quality Tests
+Instead of writing manual SQL checks, you define rules in YAML. When you run `dbt test`, dbt runs the underlying SQL to verify them.
+
+*   **Primary Key Testing:** 
+    ```yaml
+    tests:
+      - unique
+      - not_null
+    ```
+*   **Foreign Key Testing (Relationships):** Ensures referential integrity in your Star Schema.
+    ```yaml
+    tests:
+      - relationships:
+          arguments:
+            to: ref('dim_store')
+            field: store_number
+    ```
+    *This tells dbt: "Check that every `store_number` in `fact_sales` actually exists in `dim_store`."*
+
+### C. Dependencies & Lineage
+By using `ref('dim_store')` inside your YAML tests, dbt automatically knows that `fact_sales` depends on `dim_store`. When running `dbt run`, it will build the dimensions **before** the fact tables.
+
+---
+
+## 🚀 Execution Commands
+Once your `.yml` files are configured, run:
+*   **`dbt test`** -> Runs all `unique`, `not_null`, and `relationships` checks. (e.g., Output: `PASS=6 WARN=0 ERROR=0`).
+*   **`dbt docs generate`** -> Builds the documentation site with all your descriptions and lineage graphs.
+
+## 💡 Best Practice: Test Severity
+You can configure how dbt reacts when a test fails:
+```yaml
+tests:
+  - unique:
+      arguments:
+        severity: error # Options: 'error' or 'warn'
+```
+*   **`severity: error` (Default):** Crashes the pipeline to prevent bad data from flowing downstream.
+*   **`severity: warn`:** Prints a yellow warning but allows the pipeline to continue (useful for non-critical checks).
