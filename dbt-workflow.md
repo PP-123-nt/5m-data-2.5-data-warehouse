@@ -29,17 +29,26 @@ models:
     *   **Action**: Looks inside the `snapshots/` folder (e.g., `store_snapshot.sql`) and runs the logic to track historical changes (Type 2 Slowly Changing Dimensions).
     *   **Result**: Creates the **`snapshots` Dataset** in BigQuery. Includes system columns like `dbt_valid_from` and `dbt_valid_to` to track active vs. historical records.
 
-## Phase 3: Transformation & Modeling (Building the Star Schema)
+### Phase 3: Transformation & Modeling (`dbt run`)
 
-*   **`dbt run`**: 
-    *   **Action**: Compiles the SQL files in the `models/` folder and executes them in BigQuery.
-    *   **Result (Default Routing)**: Models placed directly in the `models/` folder go to the **Default Dataset** (`liquor_demo`).
-    *   **Result (Custom Routing)**: Because of the `dbt_project.yml` configuration, files inside `models/star/` (`dim_item.sql`, `dim_store.sql`, `fact_sales.sql`) are pushed to the **Custom Dataset**: **`liquor_demo_star`**. The `+materialized: table` setting ensures they become permanent tables for fast querying.
+*   **Action**: Compiles the SQL files in the `models/` folder and executes them in BigQuery.
+*   **Result (Default Routing)**: Models placed directly in the `models/` folder (e.g., `fact_sales.sql`) go to the **Default Dataset** (`liquor_demo`).
+*   **Result (Custom Routing)**: Because of the `dbt_project.yml` configuration, files located inside the `models/star/` directory (`dim_item.sql`, `dim_store.sql`) are pushed to the **Custom Dataset**: `liquor_demo_star`.
+*   **Materialization**: The `+materialized: table` setting applied to the `star` folder ensures these models become permanent physical tables in BigQuery for fast querying, rather than standard views.
+
+<img width="819" height="501" alt="image" src="https://github.com/user-attachments/assets/2b3e430c-6035-401e-9e91-1bda206f8f31" />
+
+
+
 
 ## Phase 4: Lineage & Documentation
 
 *   **`schema.yml` & `sources.yml`**: Used to define tests (checking for nulls, uniqueness) and document tables.
-*   **`dbt docs generate`** followed by **`dbt docs serve`**: Builds a local website showing a visual lineage graph of your data (from sources -> seeds -> models -> final tables).
+*   **`dbt docs generate`** followed by **`dbt docs serve`** (run in terminal): Builds a local website showing a visual lineage graph of your data (from sources -> seeds -> models -> final tables).
+
+
+<img width="1321" height="863" alt="image" src="https://github.com/user-attachments/assets/21d028dd-5534-4793-8dde-907b4091a945" />
+
 
 ---
 
@@ -64,19 +73,19 @@ liquor_sales/
 ├── logs/
 ├── macros/
 ├── models/
-│   ├── star/
+│   ├── star/                 # Custom Routing -> liquor_demo_star
 │   │   ├── dim_item.sql
 │   │   ├── dim_store.sql
-│   │   ├── fact_sales.sql
 │   │   └── schema.yml
+│   ├── fact_sales.sql        # Default Routing -> liquor_demo (currently outside star)
 │   ├── schema.yml
 │   └── sources.yml
-├── seeds/              # Place .csv files here
+├── seeds/                    # Place .csv files here
 ├── snapshots/
-│   └── store_snapshot.sql
+│   └── store_snapshot.sql    # Generates the 'snapshots' dataset
 ├── tests/
-├── dbt_project.yml     # Main config (Routing & Materialization)
-└── profiles.yml        # Connection config (Default Schema)
+├── dbt_project.yml           # Main config (Routing & Materialization)
+└── profiles.yml              # Connection config (Default Schema)
 ```
 
 
