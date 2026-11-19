@@ -1,4 +1,4 @@
-## 🕵️🕵️🕵️ dbt Project Workflow & Architecture Guide 🕵️🕵️🕵️
+# 🕵️🕵️🕵️ dbt Project Workflow & Architecture Guide 🕵️🕵️🕵️
 
 This document outlines the end-to-end data pipeline workflow for the **`liquor_sales`** dbt project, detailing how configuration, ingestion, and transformation map to the Google BigQuery data warehouse.
 
