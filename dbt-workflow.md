@@ -159,3 +159,47 @@ tests:
 ```
 *   **`severity: error` (Default):** Crashes the pipeline to prevent bad data from flowing downstream.
 *   **`severity: warn`:** Prints a yellow warning but allows the pipeline to continue (useful for non-critical checks).
+
+
+
+
+# ⚠️⚠️ dbt Dimension Tables & Snapshots: A Summary ⚠️⚠️
+
+## 1. Core Concept: What is a Dimension Table?
+*   **Yes, a dimension table is always a lookup table.** Its primary purpose is to provide descriptive context (attributes) to the facts in a fact table.
+*   **The Golden Rule:** A standard dimension table must have **exactly one row per unique business key** (e.g., `item_number` or `store_number`). 
+*   If a dimension table contains duplicates, any downstream query joining facts to this dimension will result in inflated/incorrect metrics (the "fan-out" problem).
+
+## 2. The Problem: Why Raw Data Fails the `unique` Test
+Imagine a raw `sales` table containing transaction-level data. A single product appears thousands of times. If an item's description changes over time, a simple `SELECT DISTINCT` is not enough.
+
+**The "Jack Daniels" Example:**
+*   Row 1: Item #123, "Jack Daniels", 750ml (Jan 1)
+*   Row 2: Item #123, "Jack Daniels", 750ml (Jan 2)
+*   Row 3: Item #123, "Jack Daniels 750ml", 750ml (Jan 4) *<-- Description changed!*
+
+If we run `SELECT DISTINCT`, we get **two rows** for Item #123. This breaks the `unique` test.
+
+## 3. The Solution: dbt Snapshots (SCD Type 2)
+Snapshots are used to track historical changes (Slowly Changing Dimensions Type 2). They read the raw data and generate a clean history table with `dbt_valid_from` and `dbt_valid_to` columns.
+
+**The Snapshot Output (`item_snapshot`):**
+*   Row 1: Item #123, "Jack Daniels", `dbt_valid_from` = Jan 1, `dbt_valid_to` = Jan 4
+*   Row 2: Item #123, "Jack Daniels 750ml", `dbt_valid_from` = Jan 4, `dbt_valid_to` = **NULL**
+
+*Note: The snapshot does not make the table unique by itself, but it isolates the "current" version by leaving `dbt_valid_to` as `NULL`.*
+
+## 4. The "Magic Filter" in `dim_item.sql`
+To get exactly one row per item for your dimension table, you read from the snapshot and apply this filter:
+```sql
+WHERE dbt_valid_to IS NULL
+```
+
+### 🚨🚨  Why NOT to use `CURRENT_TIMESTAMP > dbt_valid_from`
+If you add `CURRENT_TIMESTAMP > dbt_valid_from` to your `WHERE` clause, **you will break your dimension table.** 
+*   If a record was updated 5 minutes ago, `dbt_valid_from` is set to 5 minutes ago. 
+*   Due to clock skew or execution time, `CURRENT_TIMESTAMP` might be equal to or slightly less than `dbt_valid_from`, causing you to accidentally filter out the most recent, active version of that item.
+
+## 5. Best Practices & FAQs
+*   **Do all lookup tables need a snapshot?** No. Snapshots are only needed if you want to track historical changes (Type 2). If you just want the current state (Type 1), you can use `ROW_NUMBER()` or `SELECT DISTINCT` in your model.
+*   **Best Practice:** Always snapshot your **raw source data**, not your final dimension tables. This allows you to rebuild your entire warehouse from immutable history if your modeling logic changes later.
