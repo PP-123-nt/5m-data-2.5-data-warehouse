@@ -1,0 +1,31 @@
+[0m12:37:32.907190 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6db2ebd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6db2b6d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6db5cb50>]}
+
+
+============================== 12:37:32.912759 | d6863882-e36c-425c-baa3-f1b6b73109e3 ==============================
+[0m12:37:32.912759 [info ] [MainThread]: Running with dbt=1.10.9
+[0m12:37:32.913490 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/home/yvonne/.dbt', 'debug': 'False', 'version_check': 'True', 'log_path': 'logs', 'fail_fast': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'empty': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'invocation_command': 'dbt init austin_bikeshare_demo', 'introspect': 'True', 'static_parser': 'True', 'target_path': 'None', 'log_format': 'default', 'send_anonymous_usage_stats': 'True'}
+[0m12:37:32.942768 [info ] [MainThread]: Creating dbt configuration folder at /home/yvonne/.dbt
+[0m12:37:32.952496 [debug] [MainThread]: Starter project path: /home/yvonne/miniconda3/envs/elt/lib/python3.11/site-packages/dbt/include/starter_project
+[0m12:37:32.978113 [info ] [MainThread]: 
+Your new dbt project "austin_bikeshare_demo" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m12:37:32.978705 [info ] [MainThread]: Setting up your profile.
+[0m12:42:47.734606 [info ] [MainThread]: Profile austin_bikeshare_demo written to /home/yvonne/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m12:42:47.737997 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 314.90747, "process_in_blocks": "673368", "process_kernel_time": 1.608837, "process_mem_max_rss": "367520", "process_out_blocks": "80", "process_user_time": 4.180101}
+[0m12:42:47.739414 [debug] [MainThread]: Command `dbt init` succeeded at 12:42:47.739152 after 314.91 seconds
+[0m12:42:47.740482 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6db34a10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6d9afc90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x71de6dcb6b90>]}
+[0m12:42:47.741498 [debug] [MainThread]: Flushing usage events
+[0m12:42:48.730304 [debug] [MainThread]: An error was encountered while trying to flush usage events
