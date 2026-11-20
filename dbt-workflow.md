@@ -92,7 +92,7 @@ liquor_sales/
 
 
 
-# dbt Configuration: Mastering `.yml` Files
+# 📌📌 dbt Configuration: Mastering `.yml` Files  📌📌
 
 In dbt, `.yml` files (`schema.yml`, `sources.yml`) are the **control center for Documentation, Testing, and Data Lineage**. 
 
