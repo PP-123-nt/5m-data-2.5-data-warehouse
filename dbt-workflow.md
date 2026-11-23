@@ -76,10 +76,10 @@ liquor_sales/
 │   ├── star/                 # Custom Routing -> liquor_demo_star
 │   │   ├── dim_item.sql      # use SQL query to extract data from item_snapshot
 │   │   ├── dim_store.sql     # use SQL query to extract data from store_snapshot
-│   │   └── schema.yml
+│   │   └── schema.yml        
 │   ├── fact_sales.sql        # Default Routing -> liquor_demo | use SQL query to extract data from liquor sales dataset -> sales table
 │   ├── schema.yml
-│   └── sources.yml
+│   └── sources.yml           # Define data source name, database and table name
 ├── seeds/                    # Place .csv files here
 ├── snapshots/
 │   ├── item_snapshot.sql     # Generates the 'snapshots' dataset
