@@ -47,3 +47,7 @@ Learners will be able to:
 | 50 mins  | Code-along              | Part 2: Hands-on with Dbt and BigQuery.                  |
 | 10 mins  | Briefing / Q&A          | Brief on references, assignment, quiz and Q&A.           |
 |          | **END CLASS 3 HR MARK** |
+
+
+
+<img width="869" height="596" alt="image" src="https://github.com/user-attachments/assets/a070d16e-9378-4390-8809-c043e9b9e169" />
