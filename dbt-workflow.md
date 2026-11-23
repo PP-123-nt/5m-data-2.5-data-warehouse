@@ -74,14 +74,15 @@ liquor_sales/
 ├── macros/
 ├── models/
 │   ├── star/                 # Custom Routing -> liquor_demo_star
-│   │   ├── dim_item.sql
-│   │   ├── dim_store.sql
+│   │   ├── dim_item.sql      # use SQL query to extract data from item_snapshot
+│   │   ├── dim_store.sql     # use SQL query to extract data from store_snapshot
 │   │   └── schema.yml
-│   ├── fact_sales.sql        # Default Routing -> liquor_demo (currently outside star)
+│   ├── fact_sales.sql        # Default Routing -> liquor_demo | use SQL query to extract data from liquor sales dataset -> sales table
 │   ├── schema.yml
 │   └── sources.yml
 ├── seeds/                    # Place .csv files here
 ├── snapshots/
+│   ├── item_snapshot.sql     # Generates the 'snapshots' dataset
 │   └── store_snapshot.sql    # Generates the 'snapshots' dataset
 ├── tests/
 ├── dbt_project.yml           # Main config (Routing & Materialization)
