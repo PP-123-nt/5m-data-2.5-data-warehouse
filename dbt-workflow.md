@@ -204,3 +204,55 @@ If you add `CURRENT_TIMESTAMP > dbt_valid_from` to your `WHERE` clause, **you wi
 ## 5. Best Practices & FAQs
 *   **Do all lookup tables need a snapshot?** No. Snapshots are only needed if you want to track historical changes (Type 2). If you just want the current state (Type 1), you can use `ROW_NUMBER()` or `SELECT DISTINCT` in your model.
 *   **Best Practice:** Always snapshot your **raw source data**, not your final dimension tables. This allows you to rebuild your entire warehouse from immutable history if your modeling logic changes later.
+
+Here is a Markdown summary formatted for your GitHub notes, capturing the differences between standard models and snapshots regarding the `{{ config() }}` block.
+
+***
+
+# 🚨🚨  dbt: Why Do Snapshots Need a `config` Block but Standard Models Don't? 🚨🚨 
+
+When writing dbt models, you might notice that standard models (like `dim_item.sql`) often don't have a configuration block, while snapshots (`item_snapshot.sql`) strictly require one. 
+
+Here is the breakdown of why this happens.
+
+## 1. Standard Models (`dim_item.sql`, `fact_sales.sql`)
+**Standard models are implicit by default.** 
+
+When dbt runs a standard model, it simply wraps your `SELECT` statement in a `CREATE VIEW` or `CREATE TABLE` command. Because it doesn't need to do anything complicated, it looks for default settings in your `dbt_project.yml` file. If it doesn't find any, it defaults to creating a **View**.
+
+*   **The Rule:** You *can* add a config block to a standard model, but you don't *have* to. You only add it if you want to override the default behavior.
+*   **Example of Optional Override:** 
+    ```sql
+    {{ config(materialized='table') }} -- Forces this model to be a Table instead of a View
+    SELECT * FROM ...
+    ```
+
+## 2. Snapshots (`item_snapshot.sql`)
+**Snapshots are explicit and mandatory.** 
+
+A snapshot is not a simple `SELECT` query. It is a complex **Slowly Changing Dimension (SCD Type 2)** operation. dbt cannot just run `CREATE TABLE AS...`; it has to perform a multi-step background process:
+1.  Read your new `SELECT` query.
+2.  Compare it to the existing snapshot table in your database.
+3.  Find matches using the `unique_key`.
+4.  Check the `updated_at` column to see if data changed.
+5.  **Update** the old row (setting `dbt_valid_to`).
+6.  **Insert** a brand new row (setting `dbt_valid_from` to today, `dbt_valid_to` to `NULL`).
+
+Because of this complexity, **dbt requires instructions to know exactly how to execute this logic.**
+
+### Breakdown of the Snapshot Config Block:
+```sql
+{{
+  config(
+    target_schema='snapshots',       -- 1. WHERE to save the historical table
+    unique_key='item_number',        -- 2. WHAT unique identifier to track
+    strategy='timestamp',            -- 3. HOW to detect changes (timestamp vs check)
+    updated_at='updated_at',         -- 4. WHICH column holds the update time
+  )
+}}
+```
+*Without this block, dbt would have no idea what the primary key is, how to detect changes, or where to store the history.*
+
+## 💡 Key Takeaway
+*   **Standard Models** are simple transformations. dbt can figure them out automatically. `config` is optional.
+*   **Snapshots** are stateful, complex tracking operations. dbt needs explicit rules to build the history logic. `config` is mandatory.
