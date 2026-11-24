@@ -16,7 +16,7 @@ Try running the following commands:
 
 
 
-### 📌📌📌 SQL Building 📌📌📌
+# 📌📌📌 SQL Building 📌📌📌
 
 **Both the Snapshot and the Dimension should source from `bikeshare_stations` (the mapping table), NOT the fact table (`bikeshare_trips`).**
 
@@ -96,6 +96,37 @@ FROM {{ source('austin_bikeshare', 'bikeshare_trips') }}
 *   **Snapshots** sit in the middle, tracking how the mapping tables change over time.
 
 
+### 🕵️🕵️ 'sources.yml' 🕵️🕵️
+
+Add 2 tables (fact and dimension) in sources file
+```
+version: 2
+
+sources:
+  - name: austin_bikeshare
+    database: bigquery-public-data
+    tables:
+      - name: bikeshare_trips
+      - name: bikeshare_stations    # added a source for bikeshare_stations table
+```
+
+<img width="478" height="430" alt="image" src="https://github.com/user-attachments/assets/fc9eaf78-b0b7-4523-b4f6-6bb31e30ced7" />
+
+
+### 🕵️🕵️ 'dbt_project.yml' 🕵️🕵️
+
+`+materialized` to define `table` or `view` format 
+```
+models:
+  austin_bikeshare_demo:
+    # This sets the default for ALL new models in your project to be tables
+    +materialized: table
+    # Config indicated by + and applies to all files under models/example/
+    example:
+      +materialized: view
+```
+
+
 ### 🕵️🕵️ strategy='timestamp' 🕵️🕵️
 
 When you use strategy='timestamp', you are telling dbt: "To figure out if a row has changed, look at a specific timestamp column in the source data."
@@ -108,3 +139,19 @@ How it works in practice:
 *   Next week, a station changes its status from "active" to "closed", and the modified_date updates to next week's date.
 *   You run dbt snapshot again. dbt looks at the new data, sees that modified_date is newer than what it has in its history table, and says: "Aha! This row changed."
 *   dbt then automatically closes out the old record (dbt_valid_to = today) and inserts a brand new record (dbt_valid_from = today, dbt_valid_to = NULL).
+
+
+# 🚨 Critical Rule: Snapshots CANNOT go in the models/ folder
+You must keep station_snapshot.sql inside the snapshots/ folder.
+
+Why? dbt has a specific configuration in dbt_project.yml (snapshot-paths: ["snapshots"]). If you put a snapshot file in the models/ folder, dbt will try to run it as a standard model. It will fail because standard models don't understand the {% snapshot %} block. Keep snapshots separate.
+
+
+<img width="492" height="346" alt="image" src="https://github.com/user-attachments/assets/ce0e110d-57e6-429a-a8e1-4f8332a45983" />
+
+<img width="637" height="382" alt="image" src="https://github.com/user-attachments/assets/7c60e081-92e4-4774-bce3-7263268cd690" />
+<img width="651" height="364" alt="image" src="https://github.com/user-attachments/assets/3511caab-e8d7-4aee-96cc-f849d78f66f8" />
+
+
+
+
