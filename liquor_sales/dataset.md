@@ -12,23 +12,22 @@
 
 # 👉 Star Dataset `liquor_demo_star` - Dimension Table `dim_item`  `dim_store`
 
-<img width="500" height="311" alt="image" src="https://github.com/user-attachments/assets/ea2dd526-e664-4e11-897e-2fbcea623dcd" />
+<img width="600" height="373" alt="image" src="https://github.com/user-attachments/assets/ea2dd526-e664-4e11-897e-2fbcea623dcd" />
 <img width="455" height="345" alt="image" src="https://github.com/user-attachments/assets/4bf76779-04ec-4aa8-a3e8-6487adac4535" />
 <img width="437" height="320" alt="image" src="https://github.com/user-attachments/assets/e6912906-d52e-470d-9647-3be4a649a549" />
 
 
 # 👉 Snapshots Dataset `snapshots` - Snapshots Table `item_snapshot` `store_snapshot`
 
-<img width="550" height="341" alt="image" src="https://github.com/user-attachments/assets/9463dd27-5c6d-47a3-aa65-f010a1601e8d" />
-<img width="390" height="457" alt="image" src="https://github.com/user-attachments/assets/9d65a43b-76dd-469b-8f58-ac592f7524ec" />
-<img width="385" height="440" alt="image" src="https://github.com/user-attachments/assets/63da4b27-2faa-40fc-bc0c-cff2916ca2c1" />
+<img width="600" height="373" alt="image" src="https://github.com/user-attachments/assets/9463dd27-5c6d-47a3-aa65-f010a1601e8d" />
+<img width="450" height="527" alt="image" src="https://github.com/user-attachments/assets/9d65a43b-76dd-469b-8f58-ac592f7524ec" />
+<img width="450" height="514" alt="image" src="https://github.com/user-attachments/assets/63da4b27-2faa-40fc-bc0c-cff2916ca2c1" />
 
 
 
-# 🚨🚨🚨 Liquor Sales Dataset 🚨🚨🚨
+# 🚨🚨🚨 Iowa Liquor Sales Public Dataset 🚨🚨🚨
 
-<img width="227" height="136" alt="image" src="https://github.com/user-attachments/assets/c311a801-cf5a-47ba-94f0-51d740917cf6" />
+<img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/c311a801-cf5a-47ba-94f0-51d740917cf6" />
+<img width="500" height="578" alt="image" src="https://github.com/user-attachments/assets/425d8342-aee6-4097-bf99-acf15ce3a74d" />
 
-
-
-link: https://console.cloud.google.com/bigquery?ws=!1m10!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sWS_URL_PARAM!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sRESOURCE_NAVIGATION_BREADCRUMB&project=regal-river-514207-e5
+source: https://console.cloud.google.com/bigquery?ws=!1m10!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sWS_URL_PARAM!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sRESOURCE_NAVIGATION_BREADCRUMB&project=regal-river-514207-e5
