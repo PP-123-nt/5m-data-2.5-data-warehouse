@@ -5,3 +5,4 @@ sources:
     database: bigquery-public-data
     tables:
       - name: bikeshare_trips
+      - name: bikeshare_stations    # added a source for bikeshare_stations table
