@@ -30,4 +30,4 @@
 <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/c311a801-cf5a-47ba-94f0-51d740917cf6" />
 <img width="500" height="578" alt="image" src="https://github.com/user-attachments/assets/425d8342-aee6-4097-bf99-acf15ce3a74d" />
 
-source: https://console.cloud.google.com/bigquery?ws=!1m10!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sWS_URL_PARAM!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sRESOURCE_NAVIGATION_BREADCRUMB&project=regal-river-514207-e5
+**[Iowa Liquor Sales Public Dataset Source](https://console.cloud.google.com/bigquery?ws=!1m10!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sWS_URL_PARAM!1m4!3m2!1sbigquery-public-data!2siowa_liquor_sales!23sRESOURCE_NAVIGATION_BREADCRUMB&project=regal-river-514207-e5)**
