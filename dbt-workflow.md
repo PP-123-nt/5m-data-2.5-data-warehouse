@@ -38,12 +38,16 @@ models:
 
 <img width="819" height="501" alt="image" src="https://github.com/user-attachments/assets/2b3e430c-6035-401e-9e91-1bda206f8f31" />
 
+### Phase 3.5: Data Quality Validation (`dbt test`)
 
+*   **Action**: Executes the tests defined in your `schema.yml` files against the materialized tables in BigQuery.
+*   **`schema.yml`**: Used to define tests (checking for nulls, uniqueness) and document tables.
+*   **Result**: Validates that primary keys are unique (`unique`), not missing (`not_null`), and that foreign keys match (`relationships`)
 
 
 ## Phase 4: Lineage & Documentation
 
-*   **`schema.yml` & `sources.yml`**: Used to define tests (checking for nulls, uniqueness) and document tables.
+
 *   **`dbt docs generate`** followed by **`dbt docs serve`** (run in terminal): Builds a local website showing a visual lineage graph of your data (from sources -> seeds -> models -> final tables).
 
 
@@ -256,3 +260,62 @@ Because of this complexity, **dbt requires instructions to know exactly how to e
 ## 💡 Key Takeaway
 *   **Standard Models** are simple transformations. dbt can figure them out automatically. `config` is optional.
 *   **Snapshots** are stateful, complex tracking operations. dbt needs explicit rules to build the history logic. `config` is mandatory.
+
+
+Here is the explanation formatted in Markdown, ready for your GitHub notes.
+
+***
+
+# ⚡⚡ dbt Tests: Validating the Main & Star Schemas ⚡⚡
+
+When we run `dbt test`, it is not just validating one file. It is validating the **entire Star Schema architecture** across multiple `schema.yml` files. 
+
+Here is a breakdown of how the tests validate both the Main (Fact) schema and the Star (Dimension) schema based on your project structure.
+
+## 1. Validating the Main Schema (`models/schema.yml`)
+This file contains the tests for `fact_sales`, which is routed to your default dataset (`liquor_demo`). These tests ensure the fact table is structurally sound and can connect to the dimensions.
+
+*   **Primary Key Integrity (`invoice_and_item_number`)**: 
+    *   Tests `unique` and `not_null` to ensure the fact table's primary key is flawless.
+*   **Foreign Key Integrity (Referential Integrity)**:
+    *   **`store_number`**: Uses the `relationships` test to check that every store in the fact table actually exists in the `dim_store` table.
+    *   **`item_number`**: Uses the `relationships` test to check that every item in the fact table actually exists in the `dim_item` table.
+    *   *Note: These `relationships` tests act like SQL foreign key constraints.*
+
+```yaml
+# Example snippet from models/schema.yml
+models:
+  - name: fact_sales
+    columns:
+      - name: store_number
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_number
+```
+
+## 2. Validating the Star Schema (`models/star/schema.yml`)
+This file contains the tests for `dim_store` and `dim_item`, which are routed to your custom dataset (`liquor_demo_star`). These tests ensure the dimensions are clean for lookups.
+
+*   **`dim_store.store_number`**: Tests `unique` and `not_null` to ensure the dimension's primary key has exactly one row per store.
+*   **`dim_item.item_number`**: Tests `unique` and `not_null`. 
+    *   *Note: The comment in your file shows how to add a `severity` argument (e.g., `severity: error`) to the `unique` test. This is the exact test that will intentionally fail if `dim_item` hasn't been fixed to read from the snapshot yet!*
+
+```yaml
+# Example snippet from models/star/schema.yml
+models:
+  - name: dim_item
+    columns:
+      - name: item_number
+        tests:
+          - unique:
+              arguments:
+                severity: error
+          - not_null
+```
+
+## 💡 Summary
+The tests work together to prove the **Star Schema** is perfectly connected:
+1.  **Dimensions:** Are the primary keys unique and not null? (Tested in `models/star/schema.yml`).
+2.  **Facts:** Do the foreign keys successfully link back to those unique dimension keys? (Tested in `models/schema.yml`).
